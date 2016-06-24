@@ -369,11 +369,22 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 </section>
   </div>
   <div class="slide hidden" id="slide-2">
+    <section class="slide-content"><h3 id="-">今天要講啥</h3>
+<ul>
+<li>什麽是Linting?</li>
+<li>為什麽我們需要使用 Lint?</li>
+<li>JS Lint 的小歷史</li>
+<li>Install &amp; Demo</li>
+<li>寫自己的 Rules</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-3">
     <section class="slide-content"><h3 id="-linting-">什麽是Linting?</h3>
 <p><img src="imgs/Lint.png" alt="What is Lint"></p>
 </section>
   </div>
-  <div class="slide hidden" id="slide-3">
+  <div class="slide hidden" id="slide-4">
     <section class="slide-content"><h3 id="-lint-">為什麽我們需要使用 Lint?</h3>
 <ul>
 <li>幫助找到bugs</li>
@@ -383,7 +394,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 </ul>
 </section>
   </div>
-  <div class="slide hidden" id="slide-4">
+  <div class="slide hidden" id="slide-5">
     <section class="slide-content"><h3 id="js-lint-">JS Lint 的小歷史</h3>
 <p>一開始，由 <code>Douglas Crockford</code> 寫了一個 <strong><code>JSHint</code></strong></p>
 <ul>
@@ -393,7 +404,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 </ul>
 </section>
   </div>
-  <div class="slide hidden" id="slide-5">
+  <div class="slide hidden" id="slide-6">
     <section class="slide-content"><h3 id="-crockford-coding-style-">但如果不喜歡某些 Crockford 的 coding style 怎麽辦？</h3>
 <p>有些人也這麽覺得。有個人這麽稱呼 JSLint：</p>
 <blockquote>
@@ -407,7 +418,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 </ul>
 </section>
   </div>
-  <div class="slide hidden" id="slide-6">
+  <div class="slide hidden" id="slide-7">
     <section class="slide-content"><h3 id="-rules-">但如果還想要制定自己的 rules 怎麽辦？</h3>
 <p>JSHint 已經包涵了大部分的狀況，但可能還是不夠。所以又冒出了另一群人，施了 <strong>更多</strong> 的魔法。也就生出了今天的主題， <strong>ESLint</strong>。</p>
 <ul>
@@ -420,13 +431,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 </ul>
 </section>
   </div>
-  <div class="slide hidden" id="slide-7">
+  <div class="slide hidden" id="slide-8">
     <section class="slide-content"><h3 id="-">安裝</h3>
 <p>可以透過 npm 來安裝</p>
 <p>  npm install -g eslint</p>
 </section>
   </div>
-  <div class="slide hidden" id="slide-8">
+  <div class="slide hidden" id="slide-9">
     <section class="slide-content"><h3 id="-">裝好了，再來要怎麽跑？</h3>
 <p>首先，你需要寫一個 <code>.eslintrc</code>.</p>
 <p>也可以透過 cli 來幫你創一個</p>
@@ -435,13 +446,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 <pre><code>eslint examples</code></pre>
 </section>
   </div>
-  <div class="slide hidden" id="slide-9">
+  <div class="slide hidden" id="slide-10">
     <section class="slide-content"><p>&nbsp;</p>
 <p>然後所有的 bad practice 就都跑出來了</p>
 <p>出現後就把code改Clean讓他們消失吧！</p>
 </section>
   </div>
-  <div class="slide hidden" id="slide-10">
+  <div class="slide hidden" id="slide-11">
     <section class="slide-content"><h3 id="-rule-">如果寫屬於自己的 rule 呢？</h3>
 <p>但如果我們想要寫屬於我們自己的 rules，我們可以這麽做</p>
 <pre><code class="lang-sh">  npm install -g yo
@@ -450,7 +461,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 <h6 id="-eslint-101-http-lewisjellis-com-eslint101-10-"><a href="http://lewisjellis.com/eslint101/#10">ESLint 101</a></h6>
 </section>
   </div>
-  <div class="slide hidden" id="slide-11">
+  <div class="slide hidden" id="slide-12">
     <section class="slide-content"><h3 id="refs-">Refs.</h3>
 <ul>
 <li><a href="http://eslint.org/">ESLint</a></li>
@@ -465,7 +476,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 </ul>
 </section>
   </div>
-  <div class="slide hidden author-slide" id="slide-12">
+  <div class="slide hidden author-slide" id="slide-13">
     <section class="slide-content"><div class="author">
   <h1 class="name">cybai</h1>
     <h3 class="twitter">

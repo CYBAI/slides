@@ -13,6 +13,16 @@ controls: true
 
 --
 
+### 今天要講啥
+
+- 什麽是Linting?
+- 為什麽我們需要使用 Lint?
+- JS Lint 的小歷史
+- Install & Demo
+- 寫自己的 Rules
+
+--
+
 ### 什麽是Linting?
 
 ![What is Lint](imgs/Lint.png)
