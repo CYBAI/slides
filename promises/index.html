@@ -1,0 +1,1188 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Promise</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  font-size: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+  background-color: #f7f7f7;
+}
+
+.slide-content {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  padding: 30px;
+
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.author h1 {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.05s ease-out;
+  -moz-transition: width 0.05s ease-out;
+  -o-transition: width 0.05s ease-out;
+  transition: width 0.05s ease-out;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    font-size: 70%;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 120px;
+  }
+
+  .prev, .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .next, .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    padding: 10px;
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  .hidden {
+    display: inline;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  .slide {
+    position: static;
+  }
+
+  .slide-content {
+    border: 1px solid #222;
+    margin-top: 0;
+    margin-bottom: 40px;
+    height: 3.5in;
+    overflow: visible;
+  }
+
+  .slide:nth-child(even) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #333;
+  background: #f8f8f8;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #998;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #333;
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #008080;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #d14;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #900;
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #458;
+  font-weight: bold;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #000080;
+  font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #009926;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #990073;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #0086b3;
+}
+
+.hljs-meta {
+  color: #999;
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  background: #fdd;
+}
+
+.hljs-addition {
+  background: #dfd;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+body {
+  background-color: #222;
+  color: #eee;
+}
+
+h1, h3 {
+  font-family: Impact;
+  font-weight: bold;
+  font-style: italic;
+}
+
+pre code {
+  color: #ccc;
+  font-size: 140%;
+}
+
+.slide {
+  background-color: inherit;
+}
+
+.keyword {
+  color: #0086b3 !important;
+  font-weight: inherit !important;
+}
+
+.tag {
+  color: #900 !important;
+}
+
+code {
+  background-color: inherit;
+}
+
+em {
+  border-bottom: 1px solid #666;
+}
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+  <div class="slide" id="slide-1">
+    <section class="slide-content"><p><link href="prism/prism.css" rel="stylesheet" type="text/css" /></p>
+<p><script src="prism/prism.js" type="text/javascript"></script></p>
+<style>
+  .slide-content {
+    height: auto;
+  }
+</style>
+
+<h1 id="promises">Promises</h1>
+<h2 id="let-s-escape-from-callback-hell-with-promise-">Let&#39;s escape from <code>Callback Hell</code> with <code>Promise</code></h2>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-2">
+    <section class="slide-content"><h3 id="reference-from-the-blog">Reference from the blog</h3>
+<p>這份Slides全部節錄至 <a href="https://twitter.com/nolanlawson">Nolan Lawson</a> 寫在 <a href="https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html">PouchDB 官方的 Blog</a>。</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-3">
+    <section class="slide-content"><h3 id="-promise-">以下四種 Promise 差別在哪？</h3>
+<pre><code class="lang-js">doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> doSomethingElse();
+});
+
+doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  doSomethingElse();
+});
+
+doSomething().then(doSomethingElse());
+
+doSomething().then(doSomethingElse);</code></pre>
+<h6 id="-">最後再來公佈答案 😉</h6>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-4">
+    <section class="slide-content"><h3 id="promise-">Promise 解決什麽問題？</h3>
+<blockquote>
+<p>Promises 的確解決了 Callback Hell 的問題，但絕對不只是排版上的問題。就像在 <a href="http://youtu.be/hf1T_AONQJU">Redemption from Callback Hell</a> 這場很棒的talk中所解釋的，callback真正的問題是他讓我們不用寫 <code>return</code> 或是 <code>throw</code> 等關鍵字。但是，反觀這樣程式的整個流程就是以 <code>副作用(side effects)</code> 為基礎：一個 function 順便去呼叫另外一個 function。</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-5">
+    <section class="slide-content"><h3 id="promise-cont-">Promise 解決什麽問題？(Cont.)</h3>
+<blockquote>
+<p>To me, promises are all about <code>code structure</code> and <code>flow</code>.</p>
+<p>--- Nolan Lawson, 18 May 2015</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-6">
+    <section class="slide-content"><h3 id="-1-promise-">菜鳥錯誤 #1: 落入 Promise 的死亡金字塔</h3>
+<pre><code class="lang-js"><span class="hljs-comment">// Bad Practice</span>
+remotedb.allDocs({
+  include_docs: <span class="hljs-literal">true</span>,
+  attachments: <span class="hljs-literal">true</span>
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  <span class="hljs-keyword">var</span> docs = result.rows;
+  docs.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element</span>) </span>{
+    localdb.put(element.doc).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
+      alert(<span class="hljs-string">"Pulled doc with id "</span> + element.doc._id + <span class="hljs-string">" and added to local db."</span>);
+    }).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+      <span class="hljs-keyword">if</span> (err.name == <span class="hljs-string">'conflict'</span>) {
+        localdb.get(element.doc._id).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resp</span>) </span>{
+          localdb.remove(resp._id, resp._rev).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resp</span>) </span>{
+<span class="hljs-comment">// et cetera...</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-7">
+    <section class="slide-content"><h3 id="-1-promise-cont-">菜鳥錯誤 #1: 落入 Promise 的死亡金字塔 (Cont.)</h3>
+<pre><code class="lang-js"><span class="hljs-comment">// Better Style</span>
+remotedb.allDocs(...).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resultOfAllDocs</span>) </span>{
+  <span class="hljs-keyword">return</span> localdb.put(...);
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resultOfPut</span>) </span>{
+  <span class="hljs-keyword">return</span> localdb.get(...);
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resultOfGet</span>) </span>{
+  <span class="hljs-keyword">return</span> localdb.put(...);
+}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(err);
+});</code></pre>
+<ul>
+<li>不要以為只有初學者才會犯這種錯，上一張slide的 bad practice 就是源自於<a href="https://github.com/blackberry/BB10-WebWorks-Community-Samples/blob/d6ee75fe23a10d2d3a036013b6b1a0c07a542099/pdbtest/www/js/index.js#L190-L266">黑莓的 code </a></li>
+<li>這叫做 <code>composing promises</code> (組合式promises)</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-8">
+    <section class="slide-content"><h3 id="-2-promise-foreach-">菜鳥錯誤 #2: 殺小，我用 Promise 的話要怎麽做 <code>forEach</code> ?</h3>
+<pre><code class="lang-js"><span class="hljs-comment">// Bad Practice</span>
+<span class="hljs-comment">// I want to remove() all docs</span>
+db.allDocs({include_docs: <span class="hljs-literal">true</span>}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  result.rows.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">row</span>) </span>{
+    db.remove(row.doc);  
+  });
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-comment">// I naively believe all docs have been removed() now!</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-9">
+    <section class="slide-content"><h3 id="-2-promise-foreach-cont-">菜鳥錯誤 #2: 殺小，我用 Promise 的話要怎麽做 <code>forEach</code> ? (Cont.)</h3>
+<pre><code class="lang-js"><span class="hljs-comment">// Better Style</span>
+db.allDocs({include_docs: <span class="hljs-literal">true</span>}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all(result.rows.map(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">row</span>) </span>{
+    <span class="hljs-keyword">return</span> db.remove(row.doc);
+  }));
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arrayOfResults</span>) </span>{
+  <span class="hljs-comment">// All docs have really been removed() now!</span>
+});</code></pre>
+<blockquote>
+<p>這邊發生了什麽事呢？ 基本上 Promise.all() 拿 array 的 promises 當作 input，然後他會在所有的 promise 都 resolve 之後再將結果傳至 then()。他也等於是非同步的 for-loop。</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-10">
+    <section class="slide-content"><h3 id="-3-catch-">菜鳥錯誤 #3: 忘記加 <code>.catch()</code></h3>
+<pre><code class="lang-js">somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> anotherPromise();
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> yetAnotherPromise();
+}).catch(<span class="hljs-built_in">console</span>.log.bind(<span class="hljs-built_in">console</span>)); <span class="hljs-comment">// &lt;-- this is badass</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-11">
+    <section class="slide-content"><h3 id="-4-deferred-">菜鳥錯誤 #4: 使用 <code>&quot;deferred&quot;</code></h3>
+<blockquote>
+<p>簡言之，Promise 有個很長的歷史與故事，他也花了 JS 社群很長的時間來將他規範到正確的方向。
+在較早之前，jQuery 和 Angular 在每個地方都使用 <code>deferred</code> 模式，現在已經由 <code>ES6 Promise spec</code>
+所代替，其他的 <code>&quot;好&quot;</code> library 們也有實作這個功能，例如 <code>Q</code>, <code>When</code>, <code>RSVP</code>, <code>Bluebird</code>, <code>Lie</code>
+等等。所以如果你有想這麽做，那麽你就錯了。但該怎麽避免呢？</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-12">
+    <section class="slide-content"><h3 id="-4-deferred-cont-">菜鳥錯誤 #4: 使用 <code>&quot;deferred&quot;</code> (Cont.)</h3>
+<p>第一種：</p>
+<blockquote>
+<p>大多 Promise libraries 都會讓你有辦法將 <code>Promise</code> 導入第三方的 libraries。</p>
+</blockquote>
+<pre><code class="lang-js"><span class="hljs-comment">// ex. Angular's `$q`</span>
+$q.when(db.put(doc)).then(<span class="hljs-comment">/* ... */</span>); <span class="hljs-comment">// &lt;-- this is all the code you need</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-13">
+    <section class="slide-content"><h3 id="-4-deferred-cont-">菜鳥錯誤 #4: 使用 <code>&quot;deferred&quot;</code> (Cont.)</h3>
+<p>第二種：</p>
+<blockquote>
+<p>利用 <a href="https://blog.domenic.me/the-revealing-constructor-pattern/">Revealing Constructor Pattern</a>
+，這種用法在包裝 非promise API 時很好用</p>
+</blockquote>
+<pre><code class="lang-js"><span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resolve, reject</span>) </span>{
+  fs.readFile(<span class="hljs-string">'myfile.txt'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, file</span>) </span>{
+    <span class="hljs-keyword">if</span> (err) {
+      <span class="hljs-keyword">return</span> reject(err);
+    }
+    resolve(file);
+  });
+}).then(<span class="hljs-comment">/* ... */</span>)</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-14">
+    <section class="slide-content"><h3 id="-4-deferred-cont-">菜鳥錯誤 #4: 使用 <code>&quot;deferred&quot;</code> (Cont.)</h3>
+<p>在 <code>Bluebird</code> 的文件中有解釋為什麽 <code>使用&quot;deferred&quot;</code> 是 anti-pattern。</p>
+<blockquote>
+<p>In Deferred anti-pattern, &quot;deferred&quot; objects are created for no reason, complicating code.</p>
+</blockquote>
+<p><a href="https://github.com/petkaantonov/bluebird/wiki/Promise-anti-patterns#the-deferred-anti-pattern">The Deferred anti-pattern</a></p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-15">
+    <section class="slide-content"><h3 id="-5-methods-side-effects-return-">菜鳥錯誤 #5: 使用 methods (side effects) 而不是 return 他們</h3>
+<pre><code class="lang-js"><span class="hljs-comment">// Bad Practice</span>
+somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  someOtherPromise();
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-comment">// Gee, I hope someOtherPromise() has resolved!</span>
+  <span class="hljs-comment">// Spoiler alert: it hasn't.</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-16">
+    <section class="slide-content"><h3 id="-5-methods-side-effects-return-cont-">菜鳥錯誤 #5: 使用 methods (side effects) 而不是 return 他們 (Cont.)</h3>
+<pre><code class="lang-js">somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-comment">// I'm inside a then() function!</span>
+});</code></pre>
+<p>在 <code>then()</code> function 裡面我們應該做的有：</p>
+<ol>
+<li><code>return</code> another promise</li>
+<li><code>return</code> a synchronous value (or <code>undefined</code>)</li>
+<li><code>throw</code> a synchronous error</li>
+</ol>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-17">
+    <section class="slide-content"><h3 id="-5-methods-side-effects-return-cont-">菜鳥錯誤 #5: 使用 methods (side effects) 而不是 return 他們 (Cont.)</h3>
+<p>第一種: Return another promise</p>
+<blockquote>
+<p>最需要注意的是在第二個 promise 使用 <code>return</code>，這個 <code>return</code> 非常重要。
+如果沒有使用 <code>return</code> 的話，<code>getUserAccountById()</code> 就只是個副作用，
+然後下一個 function 會收到 <code>undefined</code> 而不是 <code>userAccount</code>。</p>
+</blockquote>
+<pre><code class="lang-js">getUserByName(<span class="hljs-string">'nolan'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">user</span>) </span>{
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id);
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+  <span class="hljs-comment">// I got a user account!</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-18">
+    <section class="slide-content"><h3 id="-5-methods-side-effects-return-cont-">菜鳥錯誤 #5: 使用 methods (side effects) 而不是 return 他們 (Cont.)</h3>
+<p>第二種: Return a synchronous value (or undefined)</p>
+<blockquote>
+<p>return <code>undefined</code> 通常都是一個錯誤的作法，但 return 一個同步的值
+是個很棒的方法來將同步的 code 轉成 promise-way 的 code。</p>
+</blockquote>
+<pre><code class="lang-js">getUserByName(<span class="hljs-string">'nolan'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">user</span>) </span>{
+  <span class="hljs-keyword">if</span> (inMemoryCache[user.id]) {
+    <span class="hljs-keyword">return</span> inMemoryCache[user.id];    <span class="hljs-comment">// returning a synchronous value!</span>
+  }
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id); <span class="hljs-comment">// returning a promise!</span>
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+  <span class="hljs-comment">// I got a user account!</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-19">
+    <section class="slide-content"><h3 id="-5-methods-side-effects-return-cont-">菜鳥錯誤 #5: 使用 methods (side effects) 而不是 return 他們 (Cont.)</h3>
+<p>第三種: Throw a synchronous error</p>
+<blockquote>
+<p>講到 <code>throw</code>，這就是 promise 很棒的其中一點。
+<code>catch()</code> 會在使用者登出時收到同步的錯誤，他也會收到任何
+被 <code>reject</code> 的同步錯誤。</p>
+</blockquote>
+<pre><code class="lang-js">getUserByName(<span class="hljs-string">'nolan'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">user</span>) </span>{
+  <span class="hljs-keyword">if</span> (user.isLoggedOut()) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'user logged out!'</span>); <span class="hljs-comment">// throwing a synchronous error!</span>
+  }
+  <span class="hljs-keyword">if</span> (inMemoryCache[user.id]) {
+    <span class="hljs-keyword">return</span> inMemoryCache[user.id];       <span class="hljs-comment">// returning a synchronous value!</span>
+  }
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id);    <span class="hljs-comment">// returning a promise!</span>
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+  <span class="hljs-comment">// I got a user account!</span>
+}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// Boo, I got an error!</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-20">
+    <section class="slide-content"><h3 id="-1-promise-resolve-">進階錯誤 #1: 忽略 <code>Promise.resolve()</code></h3>
+<pre><code class="lang-js"><span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">resolve, reject</span>) </span>{
+  resolve(someSynchronousValue);
+}).then(<span class="hljs-comment">/* ... */</span>);</code></pre>
+<p>可以透過 <code>Promise.resolve()</code> 簡短的寫成：</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.resolve(someSynchronousValue).then(<span class="hljs-comment">/* ... */</span>);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-21">
+    <section class="slide-content"><h3 id="-1-promise-resolve-">進階錯誤 #1: 忽略 <code>Promise.resolve()</code></h3>
+<p>因為這方法非常好用，可以將 promise-returning API methods 寫成：</p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">somePromiseAPI</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    doSomethingThatMayThrow();
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'foo'</span>;
+  }).then(<span class="hljs-comment">/* ... */</span>);
+}</code></pre>
+<p>但千萬也別忘了 <code>.catch()</code> 他。</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-22">
+    <section class="slide-content"><h3 id="-1-promise-resolve-">進階錯誤 #1: 忽略 <code>Promise.resolve()</code></h3>
+<p>同樣的，也可以使用 <code>Promise.reject()</code> 來馬上 reject 並 return promise</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.reject(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'some awful error'</span>));</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-23">
+    <section class="slide-content"><h3 id="-2-catch-then-null-">進階錯誤 #2: <code>catch()</code> 並不完全等於 <code>then(null, ...)</code></h3>
+<p>在部落格中前段有提到 <code>.catch()</code> 是個 sugar，所以下列兩者會相等</p>
+<pre><code class="lang-js">somePromise().catch(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// handle error</span>
+});
+
+somePromise().then(<span class="hljs-literal">null</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// handle error</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-24">
+    <section class="slide-content"><h3 id="-2-catch-then-null-cont-">進階錯誤 #2: <code>catch()</code> 並不完全等於 <code>then(null, ...)</code> (Cont.)</h3>
+<p>但並不代表下列兩者會相等</p>
+<pre><code class="lang-js">somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> someOtherPromise();
+}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// handle error</span>
+});
+
+somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> someOtherPromise();
+}, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// handle error</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-25">
+    <section class="slide-content"><h3 id="-2-catch-then-null-cont-">進階錯誤 #2: <code>catch()</code> 並不完全等於 <code>then(null, ...)</code> (Cont.)</h3>
+<p>如果不知道為什麽不一樣的話，<code>throw</code> error 就知道了</p>
+<pre><code class="lang-js">somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'oh noes'</span>);
+}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// I caught your error! :)</span>
+});
+
+somePromise().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'oh noes'</span>);
+}, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-comment">// I didn't catch your error! :(</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-26">
+    <section class="slide-content"><h3 id="-2-catch-then-null-cont-">進階錯誤 #2: <code>catch()</code> 並不完全等於 <code>then(null, ...)</code> (Cont.)</h3>
+<p>Another example of previous slide:</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-number">2</span>).then((val) =&gt; {
+  <span class="hljs-keyword">if</span> (val &gt; <span class="hljs-number">10</span>) {
+    <span class="hljs-keyword">return</span> val;
+  }
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The number is too small'</span>);
+})
+  .then((val) =&gt; <span class="hljs-built_in">console</span>.log(val * <span class="hljs-number">10</span>))
+  .catch((err) =&gt; <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Error in catch method'</span>, err))
+
+<span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-number">2</span>).then((val) =&gt; {
+  <span class="hljs-keyword">if</span> (val &gt; <span class="hljs-number">10</span>) {
+    <span class="hljs-keyword">return</span> val;
+  }
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The number is too small'</span>);
+}, (err) =&gt; {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Error in rejectHandler'</span>, err)
+})
+  .then((val) =&gt; <span class="hljs-built_in">console</span>.log(val * <span class="hljs-number">10</span>))</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-27">
+    <section class="slide-content"><h3 id="-2-catch-then-null-cont-">進階錯誤 #2: <code>catch()</code> 並不完全等於 <code>then(null, ...)</code> (Cont.)</h3>
+<p>如果寫 <a href="http://mochajs.org/">mocha</a> 的 unit test 跑跑看的話</p>
+<pre><code class="lang-js">it(<span class="hljs-string">'should throw an error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> doSomethingThatThrows().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'I expected an error!'</span>);
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+    should.exist(err);
+  });
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-28">
+    <section class="slide-content"><h3 id="-3-promises-vs-promise-factories">進階錯誤 #3: promises vs promise factories</h3>
+<p>如果你想要執行一系列的行為在一個promise序列中，
+換句話說，你可能會想要執行他們像 <code>Promise.all()</code>，
+但不是狀況下在平行的執行。</p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">executeSequentially</span>(<span class="hljs-params">promises</span>) </span>{
+  <span class="hljs-keyword">var</span> result = <span class="hljs-built_in">Promise</span>.resolve();
+  promises.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">promise</span>) </span>{
+    result = result.then(promise);
+  });
+  <span class="hljs-keyword">return</span> result;
+}</code></pre>
+<p>很不幸的，他們執行的不如預期。傳入 <code>executeSequentially()</code> 的
+promises 還是平行的執行。</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-29">
+    <section class="slide-content"><h3 id="-3-promises-vs-promise-factories-cont-">進階錯誤 #3: promises vs promise factories (Cont.)</h3>
+<p>上一個 example 會這樣運作的原因是因為每個 promise 一被創造
+就開始執行，所以你需要的是 an array of promise factories</p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">executeSequentially</span>(<span class="hljs-params">promiseFactories</span>) </span>{
+  <span class="hljs-keyword">var</span> result = <span class="hljs-built_in">Promise</span>.resolve();
+  promiseFactories.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">promiseFactory</span>) </span>{
+    result = result.then(promiseFactory);
+  });
+  <span class="hljs-keyword">return</span> result;
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-30">
+    <section class="slide-content"><h3 id="-3-promises-vs-promise-factories-cont-">進階錯誤 #3: promises vs promise factories (Cont.)</h3>
+<p>一個 promise factory 很簡單，因為他只是一個 function 回傳一個 promise</p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myPromiseFactory</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> somethingThatCreatesAPromise();
+}</code></pre>
+<p>他為什麽能夠運作呢？因為他並不會創造一個 promise 直到他被執行時。
+他就像個 <code>then</code> function 一樣在運作，事實上，他們正是一樣的事情。</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-31">
+    <section class="slide-content"><h3 id="-4-okay-promise-">進階錯誤 #4: okay, 那如果我想要兩個 promise 的結果呢？</h3>
+<p>有時候，promise 會需要依靠其他 promise 所回傳的值，但是我們可能需要
+兩個 promise 以上的值，例如：</p>
+<pre><code class="lang-js">getUserByName(<span class="hljs-string">'nolan'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">user</span>) </span>{
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id);
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+  <span class="hljs-comment">// dangit, I need the "user" object too!</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-32">
+    <section class="slide-content"><h3 id="-4-okay-promise-cont-">進階錯誤 #4: okay, 那如果我想要兩個 promise 的結果呢？ (Cont.)</h3>
+<p>身為一個好的 JavaScript 工程師，應該會在上一層 scope 宣告一個 <code>user</code> 變數</p>
+<pre><code class="lang-js"><span class="hljs-keyword">var</span> user;
+getUserByName(<span class="hljs-string">'nolan'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  user = result;
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id);
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+  <span class="hljs-comment">// okay, I have both the "user" and the "userAccount"</span>
+});</code></pre>
+<p>這麽寫雖然沒錯，但是作者覺得這是個拙劣的設計。</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-33">
+    <section class="slide-content"><h3 id="-4-okay-promise-cont-">進階錯誤 #4: okay, 那如果我想要兩個 promise 的結果呢？ (Cont.)</h3>
+<p>所以作者覺得應該要這麽做 (這時應該要拋去成見，樂於接受金字塔)</p>
+<pre><code class="lang-js">getUserByName(<span class="hljs-string">'nolan'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">user</span>) </span>{
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+    <span class="hljs-comment">// okay, I have both the "user" and the "userAccount"</span>
+  });
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-34">
+    <section class="slide-content"><h3 id="-4-okay-promise-cont-">進階錯誤 #4: okay, 那如果我想要兩個 promise 的結果呢？ (Cont.)</h3>
+<p>如果排版對你來說真的是個 issue 的話，那麽你可以把他們都拉成 function</p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onGetUserAndUserAccount</span>(<span class="hljs-params">user, userAccount</span>) </span>{
+  <span class="hljs-keyword">return</span> doSomething(user, userAccount);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onGetUser</span>(<span class="hljs-params">user</span>) </span>{
+  <span class="hljs-keyword">return</span> getUserAccountById(user.id).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userAccount</span>) </span>{
+    <span class="hljs-keyword">return</span> onGetUserAndUserAccount(user, userAccount);
+  });
+}
+
+getUserByName(<span class="hljs-string">'nolan'</span>)
+  .then(onGetUser)
+  .then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-comment">// at this point, doSomething() is done, and we are back to indentation 0</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-35">
+    <section class="slide-content"><h3 id="-4-okay-promise-cont-">進階錯誤 #4: okay, 那如果我想要兩個 promise 的結果呢？ (Cont.)</h3>
+<p>如果 promise 中的 code 開始變得複雜了，那麽也是應該把他們拉出來變成 function，
+然後就變成漂亮的 code 了</p>
+<pre><code class="lang-js">putYourRightFootIn()
+  .then(putYourRightFootOut)
+  .then(putYourRightFootIn)  
+  .then(shakeItAllAbout);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-36">
+    <section class="slide-content"><h3 id="-5-promise">進階錯誤 #5: 失敗的Promise</h3>
+<p>這段 code 會印出什麽？</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'foo'</span>).then(<span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'bar'</span>)).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(result);
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-37">
+    <section class="slide-content"><h3 id="-5-promise">進階錯誤 #5: 失敗的Promise</h3>
+<p>這段 code 會印出什麽？</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'foo'</span>).then(<span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'bar'</span>)).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(result);
+});</code></pre>
+<p>他會印出 <code>foo</code>，如果你覺得是 <code>bar</code> 的話就錯了！</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-38">
+    <section class="slide-content"><h3 id="-5-promise-cont-">進階錯誤 #5: 失敗的Promise (Cont.)</h3>
+<p>原因是因為當你傳一個 non-function (例如, 一個 promise) 給 <code>then()</code> 的時候，
+他會直接幫你直譯成 <code>then(null)</code>，因此就導致前一個範例的結果印失敗了，
+你也可以試試看這個範例</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'foo'</span>).then(<span class="hljs-literal">null</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(result);
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-39">
+    <section class="slide-content"><h3 id="-5-promise-cont-">進階錯誤 #5: 失敗的Promise (Cont.)</h3>
+<p>在這邊又得提到前面 <code>promises vs promise factories</code> 所提到的。
+簡言之，你<code>可以</code>直接傳一個 promise 給 <code>then()</code>，但他並不會執行的如你所想，
+<code>then()</code> 應該接收一個 function 當作參數，所以大多情況你應該這麽做</p>
+<pre><code class="lang-js"><span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'foo'</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve(<span class="hljs-string">'bar'</span>);
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(result);
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-40">
+    <section class="slide-content"><p>#</p>
+<blockquote>
+<p>還記得第一頁的題目嗎？</p>
+<p>再來讓我們公佈答案吧！</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-41">
+    <section class="slide-content"><h3 id="-promise-">以下四種 Promise 差別在哪？</h3>
+<pre><code class="lang-js">doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> doSomethingElse();
+});
+
+doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  doSomethingElse();
+});
+
+doSomething().then(doSomethingElse());
+
+doSomething().then(doSomethingElse);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-42">
+    <section class="slide-content"><h3 id="answer-of-puzzle-1">Answer of Puzzle #1</h3>
+<pre><code class="lang-js">doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> doSomethingElse();
+}).then(finalHandler);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-43">
+    <section class="slide-content"><h3 id="answer-of-puzzle-1">Answer of Puzzle #1</h3>
+<pre><code class="lang-js">doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> doSomethingElse();
+}).then(finalHandler);</code></pre>
+<p>Answer:</p>
+<pre><code class="lang-js">doSomething
+|-----------------|
+                  doSomethingElse(<span class="hljs-literal">undefined</span>)
+                  |------------------|
+                                     finalHandler(resultOfDoSomethingElse)
+                                     |------------------|</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-44">
+    <section class="slide-content"><h3 id="answer-of-puzzle-2">Answer of Puzzle #2</h3>
+<pre><code class="lang-js">doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  doSomethingElse();
+}).then(finalHandler);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-45">
+    <section class="slide-content"><h3 id="answer-of-puzzle-2">Answer of Puzzle #2</h3>
+<pre><code class="lang-js">doSomething().then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  doSomethingElse();
+}).then(finalHandler);</code></pre>
+<p>Answer:</p>
+<pre><code class="lang-js">doSomething
+|-----------------|
+                  doSomethingElse(<span class="hljs-literal">undefined</span>)
+                  |------------------|
+                  finalHandler(<span class="hljs-literal">undefined</span>)
+                  |------------------|</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-46">
+    <section class="slide-content"><h3 id="answer-of-puzzle-3">Answer of Puzzle #3</h3>
+<pre><code class="lang-js">doSomething().then(doSomethingElse())
+  .then(finalHandler);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-47">
+    <section class="slide-content"><h3 id="answer-of-puzzle-3">Answer of Puzzle #3</h3>
+<pre><code class="lang-js">doSomething().then(doSomethingElse())
+  .then(finalHandler);</code></pre>
+<p>Answer:</p>
+<pre><code class="lang-js">doSomething
+|-----------------|
+doSomethingElse(<span class="hljs-literal">undefined</span>)
+|---------------------------------|
+                  finalHandler(resultOfDoSomething)
+                  |------------------|</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-48">
+    <section class="slide-content"><h3 id="answer-of-puzzle-4">Answer of Puzzle #4</h3>
+<pre><code class="lang-js">doSomething().then(doSomethingElse)
+  .then(finalHandler);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-49">
+    <section class="slide-content"><h3 id="answer-of-puzzle-4">Answer of Puzzle #4</h3>
+<pre><code class="lang-js">doSomething().then(doSomethingElse)
+  .then(finalHandler);</code></pre>
+<p>Answer:</p>
+<pre><code class="lang-js">doSomething
+|-----------------|
+                  doSomethingElse(resultOfDoSomething)
+                  |------------------|
+                                     finalHandler(resultOfDoSomethingElse)
+                                     |------------------|</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-50">
+    <section class="slide-content"><h3 id="reference">Reference</h3>
+<ul>
+<li><a href="https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html">We have a problem with promises</a></li>
+<li><a href="http://jsbin.com/tuqukakawo/1/edit?js,console,output">JSBin to demonstrate what mentioned in the blog</a></li>
+<li><a href="https://gist.github.com/nolanlawson/6ce81186421d2fa109a4">promise protips cheat sheet</a></li>
+<li><a href="https://github.com/pouchdb/mapreduce/commit/dfe44b0ab3da9d213640a1010b34bb27327da4c9">A refactor of PouchDB&#39;s map/reduce module</a></li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-51">
+    <section class="slide-content"><h1 id="-nolan-lawson-https-twitter-com-nolanlawson-">再次感謝 <a href="https://twitter.com/nolanlawson">Nolan Lawson</a> 的文章介紹的這麽仔細</h1>
+<h1 id="m-_-_-m">m(_ _)m</h1>
+</section>
+  </div>
+  <div class="slide hidden author-slide" id="slide-52">
+    <section class="slide-content"><div class="author">
+  <h1 class="name">cybai</h1>
+    <h3 class="twitter">
+      <a href="http://twitter.com/@cyb_0815">@cyb_0815</a>
+    </h3>
+    <h3 class="url">
+      <a href="http://cybai.github.io/">http://cybai.github.io/</a>
+    </h3>
+</div>
+</section>
+  </div>
+
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  /* Positions are 1-indexed, so we need to add and subtract 1 */
+  var nextPosition = (position - 1 + n) % numSlides + 1;
+
+  /* Normalize nextPosition in-case of a negative modulo result */
+  nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+  document.getElementById('slide-' + position).classList.add('hidden');
+  document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+
+  updateProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  try {
+    window.history.replaceState({} , null, '#' + currentPosition());
+  } catch (e) {
+    window.location.hash = currentPosition();
+  }
+}
+
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+         document.mozFullScreenElement ||
+         document.webkitFullscreenElement ||
+         document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+      docElem.requestFullscreen ||
+      docElem.msRequestFullscreen ||
+      docElem.mozRequestFullScreen ||
+      docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+      doc.exitFullscreen ||
+      doc.msExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1);
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1);
+    } else if (kc === 13) {
+      toggleFullScreen();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      navigate(1);
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      navigate(-1);
+    };
+  }
+});
+
+
+  </script>
+</body>
+</html>
